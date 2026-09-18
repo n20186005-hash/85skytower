@@ -1,0 +1,10 @@
+# pnpm 12 reads project settings from this file (package.json's "pnpm" field is ignored).
+# Disable the default "minimum release age" supply-chain policy so freshly published
+# dependencies (e.g. wrangler/miniflare) don't fail `pnpm install --frozen-lockfile` in CI.
+# The lockfile already pins exact versions, so the policy adds no real protection here.
+minimumReleaseAge: 0
+
+# Approve the install scripts that this project actually needs.
+allowBuilds:
+  esbuild: true
+  workerd: true
