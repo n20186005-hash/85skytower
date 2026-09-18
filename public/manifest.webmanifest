@@ -1,0 +1,15 @@
+{
+  "name": "高雄85大樓｜旅遊指南",
+  "short_name": "85大樓",
+  "description": "高雄85大樓單頁旅遊指南：開放狀況、交通、停車、費用、最佳拍攝時段、周邊景點與美食。",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#07171c",
+  "theme_color": "#07171c",
+  "lang": "zh-Hant-TW",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
+  ]
+}

@@ -7,6 +7,11 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
 const ogImage = Astro.site ? new URL('/images/og-cover.svg', Astro.site).toString() : undefined;
 const mapUrl = 'https://maps.app.goo.gl/RUknnzQqELmLteJh6';
 
+// 最新 Google 地圖評價（僅網頁展示用，不寫入 JSON-LD，以免觸犯 Google 評價引用規範）
+const rating = 4.1;
+const reviewCount = 13282;
+const reviewSync = '2026 年 9 月';
+
 const attractionJsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -16,6 +21,7 @@ const attractionJsonLd = {
       name: '高雄85大樓',
       alternateName: ['85 Sky Tower', '高雄85大樓 CTtraveller Suit'],
       description,
+      ...(ogImage ? { image: [ogImage] } : {}),
       ...(canonical ? { url: canonical } : {}),
       address: {
         '@type': 'PostalAddress',
@@ -57,13 +63,6 @@ const attractionJsonLd = {
         '@type': 'GeoCoordinates',
         latitude: 22.6116938,
         longitude: 120.3001305,
-      },
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: 4.1,
-        reviewCount: 13282,
-        bestRating: 5,
-        worstRating: 1,
       },
       openingHours: '觀景區目前暫不開放；大樓內各營運單位開放時間請以現場或各單位公告為準。',
     },
@@ -126,18 +125,23 @@ const food = [
     <meta name="description" content={description} />
     <meta name="theme-color" content="#07171c" />
     <meta name="color-scheme" content="dark" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="85大樓" />
     <title>{title}</title>
     {canonical && <link rel="canonical" href={canonical} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="zh_TW" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {canonical && <meta property="og:url" content={canonical} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:alt" content="高雄85大樓（85 Sky Tower）夜景與城市天際線" />}
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json" set:html={JSON.stringify(attractionJsonLd)}></script>
     <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)}></script>
@@ -148,8 +152,30 @@ const food = [
       gtag('js', new Date());
       gtag('config', 'G-HXM22WWPKP');
     </script>
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+      }
+    </script>
   </head>
   <body>
+    <!--
+      SEO 實體綁定配置（單景點）— 評價來源：Google 地圖使用者評價（2026-09 同步）
+      DOMAIN_NAME            = 85skytower.org
+      ATTRACTION_FULL_NAME   = 高雄85大樓 (85 Sky Tower)
+      ATTRACTION_SHORT_NAME  = 高雄85大樓
+      CITY_NAME              = 高雄市 (Kaohsiung)
+      STATE_PROVINCE         = 台灣 (Taiwan)
+      COUNTRY_NAME           = Taiwan
+      COUNTRY_CODE_2LETTER   = TW
+      POSTAL_CODE            = 802
+      LATITUDE               = 22.6117
+      LONGITUDE              = 120.3001
+      MAPS_SHARE_URL          = https://maps.app.goo.gl/RUknnzQqELmLteJh6
+      NEARBY_LANDMARK_1      = 三多商圈
+      NEARBY_LANDMARK_2      = 愛河灣
+      GOVT_TOURISM_URL        = https://khh.travel
+    -->
     <header class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#07171c]/86 backdrop-blur-xl">
       <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 lg:px-8">
         <a href="#top" class="flex items-center gap-3" aria-label="返回頁首">
@@ -159,6 +185,7 @@ const food = [
           <a class="hover:text-white" href="#status">現況</a>
           <a class="hover:text-white" href="#transport">交通</a>
           <a class="hover:text-white" href="#around">周邊</a>
+          <a class="hover:text-white" href="#reviews">評價</a>
           <a class="hover:text-white" href="#faq">FAQ</a>
         </nav>
         <a href={mapUrl} target="_blank" rel="noreferrer" class="rounded-full border border-[#63c6bc]/45 px-4 py-2 text-sm font-bold text-[#9fe1d9] transition hover:bg-[#63c6bc]/10">Google 地圖 ↗</a>
@@ -181,6 +208,12 @@ const food = [
               <span class="rounded-full border border-white/15 px-4 py-2">建築高度 347.5 m</span>
               <span class="rounded-full border border-white/15 px-4 py-2">高雄苓雅區</span>
             </div>
+            <p class="mt-6 flex flex-wrap items-center gap-2 text-sm text-white/55">
+              <span class="font-black text-[#e4b572]">★ {rating}</span>
+              <span>·</span>
+              <span>{reviewCount.toLocaleString('en-US')} 則 Google 地圖評論</span>
+            </p>
+            <p class="mt-1 text-xs text-white/40">评分与评价数同步自谷歌地图（Google Maps）用户评价 · {reviewSync} · <a href={mapUrl} target="_blank" rel="noreferrer" class="underline decoration-white/30 underline-offset-2 hover:text-white/70">点击查看谷歌地图全部评价↗</a></p>
             <div class="mt-10 flex flex-wrap gap-4">
               <a href="#status" class="rounded-full bg-[#e4b572] px-6 py-3 font-bold text-[#07171c] transition hover:-translate-y-0.5">先看目前開放狀況</a>
               <a href="#route" class="rounded-full border border-white/18 px-6 py-3 font-bold transition hover:bg-white/7">規劃港灣散步</a>
@@ -337,6 +370,27 @@ const food = [
         </div>
       </section>
 
+      <section id="reviews" class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+          <div>
+            <p class="kicker">Guest ratings</p>
+            <h2 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">來自 Google 地圖的旅客評價</h2>
+            <p class="mt-5 max-w-md leading-7 text-white/58">評分與評價數同步自 Google 地圖（Google Maps）使用者評價，僅作為旅程參考；實際體驗仍以現場與官方公告為準。</p>
+          </div>
+          <div class="card rounded-3xl p-8">
+            <div class="flex items-end gap-4">
+              <span class="text-6xl font-black text-[#e4b572]">{rating}</span>
+              <div class="pb-1">
+                <div class="text-lg tracking-[.3em] text-[#e4b572]">★★★★<span class="text-white/25">★</span></div>
+                <p class="mt-1 text-sm text-white/55">5 分滿分 · {reviewCount.toLocaleString('en-US')} 則評論</p>
+              </div>
+            </div>
+            <p class="mt-6 border-t border-white/10 pt-5 text-xs leading-5 text-white/42">同步自 Google 地圖用戶評價，同步時間 {reviewSync}；版權歸原作者與 Google 地圖所有。</p>
+            <a href={mapUrl} target="_blank" rel="noreferrer" class="mt-5 inline-flex items-center gap-2 rounded-full bg-[#e4b572] px-6 py-3 font-bold text-[#07171c] transition hover:-translate-y-0.5">在谷歌地圖查看全部評價 ↗</a>
+          </div>
+        </div>
+      </section>
+
       <section class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
         <div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><p class="kicker">Map</p><h2 class="mt-4 text-4xl font-black">位置與入口</h2></div><a href={mapUrl} target="_blank" rel="noreferrer" class="text-sm font-bold text-[#9fe1d9]">在 Google 地圖開啟 ↗</a></div>
         <div class="map-wrap overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-2">
@@ -373,6 +427,15 @@ const food = [
           </div>
         </div>
       </section>
+      <section id="sources" class="section-rule mx-auto max-w-7xl px-5 py-16 lg:px-8">
+        <p class="kicker">Sources</p>
+        <h2 class="mt-4 text-3xl font-black">資料來源</h2>
+        <div class="mt-6 space-y-3 text-sm leading-6 text-white/55">
+          <p><span class="font-bold text-white/80">評價</span> · 同步時間 {reviewSync} — 同步自 Google 地圖（Google Maps）用戶評價；版權歸原作者與 Google 地圖所有。<a href={mapUrl} target="_blank" rel="noreferrer" class="text-[#9fe1d9] underline underline-offset-2">在谷歌地圖查看全部評價↗</a></p>
+          <p>位置、開放狀態、交通與周邊資訊以交通部觀光署及高雄市政府最新公告為準；店家營業資訊請以現場為準。</p>
+        </div>
+      </section>
+
     </main>
 
     <footer class="border-t border-white/10 px-5 py-10 lg:px-8">
