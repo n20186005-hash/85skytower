@@ -1,0 +1,393 @@
+---
+import '../styles/global.css';
+
+const title = '高雄85大樓｜港都天際線、交通與周邊散步指南';
+const description = '高雄85大樓單頁旅遊指南：目前開放狀況、交通、停車、費用、最佳拍攝時段、周邊景點與美食。';
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined;
+const ogImage = Astro.site ? new URL('/images/og-cover.svg', Astro.site).toString() : undefined;
+const mapUrl = 'https://maps.app.goo.gl/RUknnzQqELmLteJh6';
+
+const attractionJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'TouristAttraction',
+      '@id': canonical ? `${canonical}#attraction` : undefined,
+      name: '高雄85大樓',
+      alternateName: ['85 Sky Tower', '高雄85大樓 CTtraveller Suit'],
+      description,
+      ...(canonical ? { url: canonical } : {}),
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: '自強三路1號',
+        addressLocality: '苓雅區',
+        addressRegion: '高雄市',
+        postalCode: '802',
+        addressCountry: 'TW',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 22.611047,
+        longitude: 120.30037,
+      },
+      publicAccess: true,
+      isAccessibleForFree: true,
+      additionalProperty: [
+        {
+          '@type': 'PropertyValue',
+          name: '目前參觀狀態',
+          value: '37–85樓整修中，觀景區暫不開放；外觀與周邊公共空間可依現場狀況參觀。',
+        },
+      ],
+    },
+    {
+      '@type': 'LocalBusiness',
+      '@id': canonical ? `${canonical}#listing` : undefined,
+      name: '85 Sky Tower CTtraveller Suit',
+      ...(canonical ? { url: canonical } : {}),
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: '自強三路5號',
+        addressLocality: '苓雅區',
+        addressRegion: '高雄市',
+        postalCode: '802',
+        addressCountry: 'TW',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 22.6116938,
+        longitude: 120.3001305,
+      },
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: 4.1,
+        reviewCount: 13282,
+        bestRating: 5,
+        worstRating: 1,
+      },
+      openingHours: '觀景區目前暫不開放；大樓內各營運單位開放時間請以現場或各單位公告為準。',
+    },
+  ],
+};
+
+const faqs = [
+  {
+    q: '高雄85大樓現在可以上觀景台嗎？',
+    a: '交通部觀光署目前仍標示大樓37至85樓因整修暫不開放，因此不要依照舊資料安排74或75樓觀景行程。若未來重新開放，請以官方最新公告為準。',
+  },
+  {
+    q: '參觀高雄85大樓需要買門票嗎？',
+    a: '目前沒有可列出的現行觀景台票價。從外部欣賞建築與走訪周邊街區不需要景點門票；館內個別營運空間如有收費，則依各單位公告。',
+  },
+  {
+    q: '搭捷運或輕軌怎麼去最方便？',
+    a: '可從捷運紅線三多商圈站步行前往，也可搭輕軌至高雄展覽館站後沿新光路步行。兩條路線都適合串聯總圖、展覽館與愛河灣。',
+  },
+  {
+    q: '什麼時間最適合拍85大樓？',
+    a: '外觀攝影建議選傍晚到入夜，能同時捕捉天色漸層、玻璃帷幕與城市燈光。白天則更適合看建築輪廓與港區尺度。',
+  },
+  {
+    q: 'Google 地圖地址為什麼和觀光署地址不同？',
+    a: '這個 Google 地圖點位標示自強三路5號，較接近特定入口或住宿型點位；交通部觀光署的85大樓景點資料則列自強三路1號。兩者位於同一大樓範圍，導航時可依實際要前往的入口選擇。',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  ...(canonical ? { url: `${canonical}#faq` } : {}),
+  mainEntity: faqs.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+
+const nearby = [
+  ['高雄市立圖書館總館', '玻璃量體與空中花園，是85大樓旁最適合一起看的現代建築。'],
+  ['高雄展覽館', '沿新光路往港邊走，很快就會從高樓街廓切換到港灣尺度。'],
+  ['愛河灣・新光碼頭', '黃昏散步的重點區域，適合回望85大樓在港區天際線中的比例。'],
+  ['三多商圈', '百貨、餐飲與城市機能密集，可作為抵達或離開前的補給站。'],
+];
+
+const food = [
+  ['興中夜市／苓雅夜市一帶', '小吃密度高，適合把85大樓夜景與在地晚餐排成同一段行程。'],
+  ['好小子碳烤三明治', '位於自強路、三多路一帶，適合作為快速小吃選項。'],
+  ['MICASITA 米卡希達 墨西哥料理', '鄰近街區的異國料理選擇，適合想坐下來用餐的人。'],
+  ['Rawat Indian Kitchen', '周邊可找到的印度料理選項；營業時段與座位狀況建議出發前再確認。'],
+];
+---
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#07171c" />
+    <meta name="color-scheme" content="dark" />
+    <title>{title}</title>
+    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_TW" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(attractionJsonLd)}></script>
+    <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)}></script>
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-HXM22WWPKP"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-HXM22WWPKP');
+    </script>
+  </head>
+  <body>
+    <header class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#07171c]/86 backdrop-blur-xl">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 lg:px-8">
+        <a href="#top" class="flex items-center gap-3" aria-label="返回頁首">
+          <img src="/icons/logo.svg" alt="高雄85大樓" class="h-10 w-auto" />
+        </a>
+        <nav aria-label="主要導覽" class="hidden items-center gap-6 text-sm text-white/65 md:flex">
+          <a class="hover:text-white" href="#status">現況</a>
+          <a class="hover:text-white" href="#transport">交通</a>
+          <a class="hover:text-white" href="#around">周邊</a>
+          <a class="hover:text-white" href="#faq">FAQ</a>
+        </nav>
+        <a href={mapUrl} target="_blank" rel="noreferrer" class="rounded-full border border-[#63c6bc]/45 px-4 py-2 text-sm font-bold text-[#9fe1d9] transition hover:bg-[#63c6bc]/10">Google 地圖 ↗</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="gridline relative min-h-[92vh] overflow-hidden pt-24">
+        <div class="absolute inset-y-0 right-[11%] hidden w-px bg-[#63c6bc]/20 lg:block"></div>
+        <div class="absolute right-[4%] top-24 hidden text-[16rem] font-black leading-none text-white/[.025] lg:block">85</div>
+        <div class="mx-auto grid max-w-7xl gap-12 px-5 pb-16 pt-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:px-8 lg:pb-24">
+          <div class="relative z-10">
+            <p class="kicker">Kaohsiung · Harbor Skyline</p>
+            <h1 class="mt-6 text-6xl font-black leading-[.95] tracking-[-.05em] sm:text-7xl lg:text-[6.8rem]">
+              城市往上<br/><span class="text-[#63c6bc]">港灣向前</span>
+            </h1>
+            <p class="mt-8 max-w-xl text-lg leading-8 text-white/65">高雄85大樓不只是「一棟高樓」。從三多商圈走向港邊時，它像一支垂直座標，把高雄的商業街區、亞洲新灣區與海港視線串在一起。</p>
+            <div class="mt-8 flex flex-wrap gap-3 text-sm">
+              <span class="rounded-full border border-white/15 px-4 py-2">85層地標</span>
+              <span class="rounded-full border border-white/15 px-4 py-2">建築高度 347.5 m</span>
+              <span class="rounded-full border border-white/15 px-4 py-2">高雄苓雅區</span>
+            </div>
+            <div class="mt-10 flex flex-wrap gap-4">
+              <a href="#status" class="rounded-full bg-[#e4b572] px-6 py-3 font-bold text-[#07171c] transition hover:-translate-y-0.5">先看目前開放狀況</a>
+              <a href="#route" class="rounded-full border border-white/18 px-6 py-3 font-bold transition hover:bg-white/7">規劃港灣散步</a>
+            </div>
+          </div>
+          <figure class="photo-frame relative mx-auto w-full max-w-[620px] overflow-hidden rounded-[2rem] lg:ml-auto">
+            <img
+              src="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/85_Sky_Tower_20240919.jpg/960px-85_Sky_Tower_20240919.jpg"
+              alt="晴天下由街區仰望高雄85大樓"
+              width="960" height="1440"
+              fetchpriority="high"
+              class="aspect-[4/5] w-full object-cover object-[50%_55%]"
+            />
+            <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-5 pb-4 pt-16 text-xs text-white/65">實景照：Suicasmo / Wikimedia Commons / CC BY-SA 4.0</figcaption>
+            <div class="absolute right-4 top-4 rounded-full border border-white/20 bg-[#07171c]/75 px-4 py-2 text-xs font-bold backdrop-blur">22.611°N · 120.300°E</div>
+          </figure>
+        </div>
+      </section>
+
+      <section id="status" class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[.72fr_1.28fr]">
+          <div>
+            <p class="kicker">Before you go</p>
+            <h2 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">現況先知道</h2>
+            <p class="mt-5 max-w-md leading-7 text-white/58">這一段比「打卡攻略」更重要：舊網路文章常提到高樓層觀景台，但目前並不適用。</p>
+          </div>
+          <div class="grid gap-4 md:grid-cols-2">
+            <article data-status="closed" class="card rounded-3xl p-6 md:col-span-2">
+              <p class="text-sm font-black tracking-[.2em]">目前狀態</p>
+              <h3 class="mt-3 text-2xl font-black">37–85樓整修中，觀景區暫不開放</h3>
+              <p class="mt-3 leading-7 text-white/65">交通部觀光署目前仍以此狀態標示85大樓。本站不沿用舊的74／75樓觀景台票價與開放時間，以免誤導行程。</p>
+            </article>
+            <article class="card rounded-3xl p-6">
+              <p class="kicker">門票 / 費用</p>
+              <h3 class="mt-3 text-xl font-black">沒有現行觀景台票價可列</h3>
+              <p class="mt-3 text-sm leading-6 text-white/60">從外部欣賞建築、走訪周邊街區本身不收景點門票；館內個別營運單位若有費用，以其公告為準。</p>
+            </article>
+            <article class="card rounded-3xl p-6">
+              <p class="kicker">地址辨識</p>
+              <h3 class="mt-3 text-xl font-black">1號與5號，都是同一座建築範圍</h3>
+              <p class="mt-3 text-sm leading-6 text-white/60">本頁 Google 點位為自強三路5號；觀光署景點資料列自強三路1號。前往特定入口時，依你的目的地點位導航即可。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="overflow-hidden bg-[#f0eadf] text-[#0b1d21]">
+        <div class="mx-auto grid max-w-7xl lg:grid-cols-2">
+          <figure class="relative min-h-[560px]">
+            <img
+              src="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Kaohsiung_85_Sky_Tower_20181206.jpg/960px-Kaohsiung_85_Sky_Tower_20181206.jpg"
+              alt="傍晚燈光亮起時的高雄85大樓"
+              width="960" height="1280" loading="lazy"
+              class="absolute inset-0 h-full w-full object-cover"
+            />
+            <figcaption class="absolute bottom-4 left-4 rounded-full bg-black/65 px-4 py-2 text-xs text-white/80">domjisch / Wikimedia Commons / CC BY 2.0</figcaption>
+          </figure>
+          <div class="flex items-center px-6 py-16 sm:px-10 lg:px-16">
+            <div>
+              <p class="text-xs font-black uppercase tracking-[.22em] text-[#397f79]">Best light</p>
+              <h2 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">最佳游覽時段<br/>不是「上樓」，而是看城市變色</h2>
+              <p class="mt-6 max-w-xl text-lg leading-8 text-black/65">如果目標是建築與城市攝影，傍晚到入夜最有層次：先在新光路一帶看玻璃帷幕收進最後的日光，再往港邊走，回頭看85大樓在燈光與海港之間形成高雄最容易辨認的輪廓。</p>
+              <div class="mt-10 grid gap-5 sm:grid-cols-2">
+                <div class="border-t border-black/15 pt-4"><p class="text-3xl font-black">45–90 分</p><p class="mt-2 text-sm text-black/55">只看建築外觀＋附近街區的建議停留</p></div>
+                <div class="border-t border-black/15 pt-4"><p class="text-3xl font-black">2–3 小時</p><p class="mt-2 text-sm text-black/55">加入總圖、展覽館與愛河灣散步</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="transport" class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[.9fr_1.1fr]">
+          <div>
+            <p class="kicker">Getting here</p>
+            <h2 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">詳細交通</h2>
+            <p class="mt-5 max-w-md leading-7 text-white/58">85大樓最適合用大眾運輸抵達，再把步行路線延伸到港灣。這樣不必繞回取車，也比較能感受到街區尺度的變化。</p>
+          </div>
+          <div class="space-y-4">
+            <article class="card rounded-3xl p-6"><div class="flex items-start gap-4"><span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#63c6bc] font-black text-[#07171c]">M</span><div><h3 class="text-xl font-black">捷運｜紅線 R8 三多商圈站</h3><p class="mt-2 leading-7 text-white/60">由1號出口沿三多四路方向步行，市府新灣區交通資訊估計約8分鐘可到85大樓周邊。</p></div></div></article>
+            <article class="card rounded-3xl p-6"><div class="flex items-start gap-4"><span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#e4b572] font-black text-[#07171c]">C</span><div><h3 class="text-xl font-black">輕軌｜高雄展覽館站</h3><p class="mt-2 leading-7 text-white/60">下車後沿新光路步行，市府資訊約3分鐘可達；很適合直接串聯高雄展覽館、總圖與愛河灣。</p></div></div></article>
+            <article class="card rounded-3xl p-6"><div class="flex items-start gap-4"><span class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/20 font-black">BUS</span><div><h3 class="text-xl font-black">公車｜85大樓站</h3><p class="mt-2 leading-7 text-white/60">市府新灣區交通資訊列有100、黃1、綠1、83等路線可抵達85大樓站；實際班次請以高雄公車即時資訊為準。</p></div></div></article>
+            <article class="card rounded-3xl p-6"><div class="flex items-start gap-4"><span class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/20 font-black">CAR</span><div><h3 class="text-xl font-black">開車｜國道1號中正交流道方向</h3><p class="mt-2 leading-7 text-white/60">可循中正路、三多路進市區，再轉自強三路。尖峰時段建議預留市中心壅塞與找車位時間。</p></div></div></article>
+          </div>
+        </div>
+
+        <div id="parking" class="mt-12 grid gap-6 md:grid-cols-3">
+          <div class="card rounded-3xl p-6 md:col-span-1"><p class="kicker">Parking</p><h3 class="mt-3 text-2xl font-black">停車資訊</h3><p class="mt-4 leading-7 text-white/58">觀光署交通資料列出的附近停車選項包含榮帝苓雅三多站停車場、高興昌第二停車場與實全中華路停車場。費率與空位變動快，本站不寫死價格。</p></div>
+          <div class="card rounded-3xl p-6 md:col-span-2"><p class="text-lg font-black">如果你是為了拍夜景，建議這樣選：</p><div class="mt-5 grid gap-4 sm:grid-cols-3 text-sm text-white/60"><p><strong class="block text-white">短停</strong>先找自強路／三多路周邊停車場，再步行繞大樓一圈。</p><p><strong class="block text-white">長停</strong>若要走總圖、展覽館、港邊，停一次後全程步行或搭輕軌更順。</p><p><strong class="block text-white">週末</strong>展覽活動可能影響新灣區車流，提早抵達通常比繞場找位更省時間。</p></div></div>
+        </div>
+      </section>
+
+      <section id="route" class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <div class="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div><p class="kicker">Harbor walk</p><h2 class="mt-4 text-4xl font-black sm:text-5xl">一條不必上樓的85散步線</h2></div>
+          <p class="max-w-lg text-sm leading-6 text-white/55">建議從「城市」走向「港口」：三多商圈 → 85大樓 → 高雄市立圖書館總館 → 高雄展覽館 → 愛河灣。黃昏出發最容易看到空間與光線一起變化。</p>
+        </div>
+        <div class="grid gap-4 md:grid-cols-5">
+          {['三多商圈','85大樓','高雄市立圖書館總館','高雄展覽館','愛河灣'].map((stop, i) => (
+            <div class="card relative rounded-3xl p-5">
+              <span class="text-5xl font-black text-white/8">0{i+1}</span>
+              <h3 class="mt-4 font-black">{stop}</h3>
+              {i < 4 && <span class="absolute -right-3 top-1/2 z-10 hidden text-[#63c6bc] md:block">→</span>}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="bg-[#0d252b] py-20">
+        <div class="mx-auto max-w-7xl px-5 lg:px-8">
+          <div class="grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center">
+            <figure class="photo-frame relative overflow-hidden rounded-[2rem]">
+              <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/85_Sky_Tower_atrium_Kaohsiung_Taiwan_2025_12_09_114617.jpg/960px-85_Sky_Tower_atrium_Kaohsiung_Taiwan_2025_12_09_114617.jpg" alt="高雄85大樓挑高中庭向上看的幾何線條" width="960" height="1280" loading="lazy" class="aspect-[4/5] w-full object-cover"/>
+              <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-5 pb-4 pt-16 text-xs text-white/70">The Nature Box / Wikimedia Commons / CC0 1.0</figcaption>
+            </figure>
+            <div>
+              <p class="kicker">Architecture</p>
+              <h2 class="mt-4 text-4xl font-black sm:text-5xl">看見「高」之外的結構</h2>
+              <p class="mt-6 text-lg leading-8 text-white/62">85大樓的辨識度來自兩側量體托起中央主塔的構圖。它不是單一方盒，而是把基座、雙翼、鏤空區域與上方塔身疊成一個很有方向性的輪廓。從不同街角移動，建築的開口與翼部會不斷改變比例。</p>
+              <div class="mt-10 grid gap-6 sm:grid-cols-2">
+                <div class="border-l-2 border-[#63c6bc] pl-5"><p class="text-3xl font-black">347.5 m</p><p class="mt-2 text-sm text-white/52">建築高度（Skyscraper Center）</p></div>
+                <div class="border-l-2 border-[#e4b572] pl-5"><p class="text-3xl font-black">85 + 5</p><p class="mt-2 text-sm text-white/52">地上85層、地下5層</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="around" class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <div class="grid gap-14 lg:grid-cols-2">
+          <div>
+            <p class="kicker">Nearby places</p>
+            <h2 class="mt-4 text-4xl font-black">周邊景點</h2>
+            <div class="mt-8 space-y-3">
+              {nearby.map(([name, desc], i) => (
+                <article class="card rounded-3xl p-5">
+                  <div class="flex gap-4"><span class="text-sm font-black text-[#63c6bc]">0{i+1}</span><div><h3 class="font-black">{name}</h3><p class="mt-2 text-sm leading-6 text-white/55">{desc}</p></div></div>
+                </article>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p class="kicker">Eat nearby</p>
+            <h2 class="mt-4 text-4xl font-black">周邊美食</h2>
+            <p class="mt-5 text-sm leading-6 text-white/50">店家營業資訊容易變動，這裡只做方向性選擇，不硬寫可能過期的營業時間與價格。</p>
+            <div class="mt-8 space-y-3">
+              {food.map(([name, desc], i) => (
+                <article class="card rounded-3xl p-5">
+                  <div class="flex gap-4"><span class="text-sm font-black text-[#e4b572]">0{i+1}</span><div><h3 class="font-black">{name}</h3><p class="mt-2 text-sm leading-6 text-white/55">{desc}</p></div></div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><p class="kicker">Map</p><h2 class="mt-4 text-4xl font-black">位置與入口</h2></div><a href={mapUrl} target="_blank" rel="noreferrer" class="text-sm font-bold text-[#9fe1d9]">在 Google 地圖開啟 ↗</a></div>
+        <div class="map-wrap overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-2">
+          <iframe
+            title="高雄85大樓 Google 地圖"
+            src="https://www.google.com/maps?q=22.6116938,120.3001305&hl=zh-TW&gl=TW&z=17&output=embed"
+            class="h-[520px] w-full rounded-[1.6rem] border-0"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <p class="mt-4 text-xs leading-5 text-white/42">地圖以你提供的 Google Maps 點位座標（自強三路5號）顯示；觀光署景點資料的正式地標地址為自強三路1號。</p>
+      </section>
+
+      <section id="faq" class="section-rule mx-auto max-w-5xl px-5 py-20 lg:px-8">
+        <p class="kicker">FAQ</p>
+        <h2 class="mt-4 text-4xl font-black sm:text-5xl">常見問答</h2>
+        <div class="mt-10 divide-y divide-white/10 border-y border-white/10">
+          {faqs.map((item, i) => (
+            <details class="group py-6" open={i === 0}>
+              <summary class="flex items-center justify-between gap-6 font-bold"><span>{item.q}</span><span class="text-[#63c6bc] transition group-open:rotate-45">＋</span></summary>
+              <p class="mt-4 max-w-3xl leading-7 text-white/58">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section class="bg-[#f0eadf] text-[#0b1d21]">
+        <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+          <div class="grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
+            <div><p class="text-xs font-black uppercase tracking-[.22em] text-[#397f79]">Field note</p><h2 class="mt-4 max-w-3xl text-4xl font-black">把85大樓當成一個「方向」，而不是一張舊觀景台門票。</h2><p class="mt-5 max-w-2xl leading-7 text-black/60">它最值得看的，是高雄如何從三多商圈一路打開到港邊。建議先確認現況，再把時間留給街區、建築與黃昏。</p></div>
+            <a href={mapUrl} target="_blank" rel="noreferrer" class="inline-flex rounded-full bg-[#0b1d21] px-6 py-3 font-bold text-white">開始導航 ↗</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-white/10 px-5 py-10 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="flex flex-col justify-between gap-7 md:flex-row md:items-start">
+          <div><img src="/icons/logo.svg" alt="高雄85大樓" class="h-11 w-auto"/><p class="mt-4 max-w-lg text-sm leading-6 text-white/45">本網站為非官方旅遊資訊頁，與85大樓、館內業者、政府機關或 Google 均無隸屬或授權關係；開放狀態、交通與店家資訊請以官方及現場最新公告為準。</p></div>
+          <div class="flex flex-wrap gap-4 text-sm text-white/48"><a href="#privacy">隱私說明</a><a href="#terms">使用條款</a><a href="#cookies">Cookie 設定</a></div>
+        </div>
+        <div class="mt-8 grid gap-3 md:grid-cols-3">
+          <details id="privacy" class="card rounded-2xl p-4"><summary class="font-bold">隱私說明 ＋</summary><p class="mt-3 text-xs leading-5 text-white/48">本站不提供登入或會員功能。為了解頁面使用情況，使用 Google Analytics 4；相關資料處理由 Google 的服務與瀏覽器設定決定。</p></details>
+          <details id="terms" class="card rounded-2xl p-4"><summary class="font-bold">使用條款 ＋</summary><p class="mt-3 text-xs leading-5 text-white/48">本站內容供行程規劃參考，不保證即時性。涉及開放、費用、交通與營運資訊時，請於出發前向官方來源再次確認。</p></details>
+          <details id="cookies" class="card rounded-2xl p-4"><summary class="font-bold">Cookie 設定 ＋</summary><p class="mt-3 text-xs leading-5 text-white/48">本站本身不建立會員 Cookie。GA4 可能依你的瀏覽器與 Google 設定使用分析相關技術；可透過瀏覽器封鎖第三方 Cookie 或追蹤功能。</p></details>
+        </div>
+        <div class="mt-8 flex flex-col justify-between gap-3 border-t border-white/8 pt-5 text-xs text-white/36 sm:flex-row"><p>照片授權詳見專案 PHOTO_CREDITS.md</p><p>GA4 · G-HXM22WWPKP</p></div>
+      </div>
+    </footer>
+  </body>
+</html>
