@@ -8,7 +8,20 @@ const SITE_URL = 'https://85skytower.org';
 
 export default defineConfig({
   site: SITE_URL || undefined,
-  integrations: SITE_URL ? [sitemap()] : [],
+  integrations: SITE_URL
+    ? [
+        sitemap({
+          i18n: {
+            defaultLocale: 'zh',
+            locales: {
+              zh: 'zh-Hant',
+              en: 'en',
+              ja: 'ja',
+            },
+          },
+        }),
+      ]
+    : [],
   vite: {
     plugins: [tailwindcss()],
   },

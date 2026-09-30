@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HomeContent from '../../components/HomeContent.astro';
+import { home } from '../../data/content';
+import { homeJsonLd } from '../../lib/schema';
+import type { Locale } from '../../i18n';
+
+const locale: Locale = 'en';
+const content = home[locale];
+const canonical = Astro.site ? new URL('/en/', Astro.site).toString() : 'https://85skytower.org/en/';
+const jsonLd = homeJsonLd(content, canonical, locale);
+---
+<BaseLayout locale={locale} title={content.title} description={content.description} page="home" jsonLd={jsonLd}>
+  <HomeContent locale={locale} />
+</BaseLayout>

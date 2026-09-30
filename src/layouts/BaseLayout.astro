@@ -1,0 +1,143 @@
+---
+import '../styles/global.css';
+import { SITE_URL, GA4_ID } from '../config';
+import { locales, localeMeta, alternates, pagePaths, subpageLabel, t, type Locale, type PageKey } from '../i18n';
+
+export interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  page: PageKey;
+  jsonLd: object[];
+}
+
+const { locale, title, description, page, jsonLd } = Astro.props;
+
+const canonical = Astro.site ? new URL(pagePaths[page][locale], Astro.site).toString() : undefined;
+const ogImage = Astro.site ? new URL('/images/og-cover.svg', Astro.site).toString() : undefined;
+const meta = localeMeta[locale];
+const hreflangs = alternates(page, SITE_URL);
+const mapUrl = 'https://maps.app.goo.gl/RUknnzQqELmLteJh6';
+
+// 語言切換器：同一邏輯頁面在各語的路徑，標籤使用各語言的母語名稱（endonym）。
+const langLinks = locales.map((l) => ({ locale: l, href: pagePaths[page][l], label: localeMeta[l].label }));
+
+// 導覽：首頁用頁內錨點；子頁則指回首頁對應錨點，避免連到不存在的 id。
+const homeBase = pagePaths.home[locale];
+const navItems =
+  page === 'home'
+    ? [
+        { href: '#status', label: t(locale, 'nav.status') },
+        { href: '#transport', label: t(locale, 'nav.transport') },
+        { href: pagePaths.floors[locale], label: subpageLabel.floors[locale] },
+        { href: pagePaths.transport[locale], label: subpageLabel.transport[locale] },
+        { href: '#around', label: t(locale, 'nav.around') },
+        { href: '#reviews', label: t(locale, 'nav.reviews') },
+        { href: '#faq', label: t(locale, 'nav.faq') },
+      ]
+    : [
+        { href: homeBase, label: t(locale, 'nav.home') },
+        { href: `${homeBase}#status`, label: t(locale, 'nav.status') },
+        { href: `${homeBase}#around`, label: t(locale, 'nav.around') },
+        { href: pagePaths.floors[locale], label: subpageLabel.floors[locale] },
+        { href: pagePaths.transport[locale], label: subpageLabel.transport[locale] },
+        { href: `${homeBase}#faq`, label: t(locale, 'nav.faq') },
+      ];
+---
+
+<!doctype html>
+<html lang={meta.htmlLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#07171c" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="85大樓" />
+    <title>{title}</title>
+    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={meta.ogLocale} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:alt" content={t(locale, 'og.imageAlt')} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    {hreflangs.map((h) => <link rel="alternate" hreflang={h.hreflang} href={h.href} />)}
+    {jsonLd.map((schema) => <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>)}
+    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{GA4_ID}');
+    </script>
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+      }
+    </script>
+  </head>
+  <body>
+    <header class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#07171c]/86 backdrop-blur-xl">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 lg:px-8">
+        <a href={pagePaths.home[locale]} class="flex items-center gap-3" aria-label={t(locale, 'nav.home')}>
+          <img src="/icons/logo.svg" alt={t(locale, 'logo.alt')} class="h-10 w-auto" />
+        </a>
+        <nav aria-label="主要導覽" class="hidden items-center gap-5 text-sm text-white/65 md:flex">
+          {navItems.map((item) => <a class="hover:text-white" href={item.href}>{item.label}</a>)}
+        </nav>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1 text-xs" aria-label={t(locale, 'lang.switch')}>
+            {langLinks.map((l) => (
+              <a
+                href={l.href}
+                hreflang={localeMeta[l.locale].ogLocale}
+                class:list={['rounded-full px-2.5 py-1 transition', l.locale === locale ? 'bg-[#63c6bc]/20 text-[#9fe1d9] font-bold' : 'text-white/55 hover:text-white']}
+                aria-current={l.locale === locale ? 'true' : undefined}
+              >{l.label}</a>
+            ))}
+          </div>
+          <a href={mapUrl} target="_blank" rel="noreferrer" class="rounded-full border border-[#63c6bc]/45 px-4 py-2 text-sm font-bold text-[#9fe1d9] transition hover:bg-[#63c6bc]/10">{t(locale, 'cta.map')}</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <slot />
+    </main>
+
+    <footer class="border-t border-white/10 px-5 py-10 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="flex flex-col justify-between gap-7 md:flex-row md:items-start">
+          <div>
+            <img src="/icons/logo.svg" alt={t(locale, 'logo.alt')} class="h-11 w-auto" />
+            <p class="mt-4 max-w-lg text-sm leading-6 text-white/45">{t(locale, 'footer.disclaimer')}</p>
+          </div>
+          <div class="flex flex-wrap gap-4 text-sm text-white/48">
+            <a href="#privacy">{t(locale, 'footer.privacy')}</a>
+            <a href="#terms">{t(locale, 'footer.terms')}</a>
+            <a href="#cookies">{t(locale, 'footer.cookies')}</a>
+          </div>
+        </div>
+        <div class="mt-8 grid gap-3 md:grid-cols-3">
+          <details id="privacy" class="card rounded-2xl p-4"><summary class="font-bold">{t(locale, 'legal.privacy')} ＋</summary><p class="mt-3 text-xs leading-5 text-white/48">{t(locale, 'legal.privacyBody')}</p></details>
+          <details id="terms" class="card rounded-2xl p-4"><summary class="font-bold">{t(locale, 'legal.terms')} ＋</summary><p class="mt-3 text-xs leading-5 text-white/48">{t(locale, 'legal.termsBody')}</p></details>
+          <details id="cookies" class="card rounded-2xl p-4"><summary class="font-bold">{t(locale, 'legal.cookies')} ＋</summary><p class="mt-3 text-xs leading-5 text-white/48">{t(locale, 'legal.cookiesBody')}</p></details>
+        </div>
+        <div class="mt-8 flex flex-col justify-between gap-3 border-t border-white/8 pt-5 text-xs text-white/36 sm:flex-row">
+          <p>{t(locale, 'footer.photo')}</p>
+          <p>GA4 · {GA4_ID}</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

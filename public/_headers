@@ -1,0 +1,12 @@
+# 全站安全與 HSTS 標頭（Cloudflare 會自動套用）。
+# 注意：http→https 與 www→apex 這類「網域級」重導向，Workers Static Assets
+# 不支援在 _redirects 裡做，必須在 Cloudflare 控制台用
+# 「Always Use HTTPS」與「Redirect Rules」設定（見 README）。
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Content-Security-Policy: default-src 'self'; img-src 'self' https://thumb.wikimedia.org https://www.google.com https: data:; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; frame-src https://www.google.com; connect-src 'self' https://www.google-analytics.com

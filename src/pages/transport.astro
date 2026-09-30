@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubpageContent from '../components/SubpageContent.astro';
+import { transportPage } from '../data/content';
+import { subpageJsonLd } from '../lib/schema';
+import { t, pagePaths, subpageLabel, type Locale, type PageKey } from '../i18n';
+
+const locale: Locale = 'zh';
+const page: PageKey = 'transport';
+const content = transportPage[locale];
+const canonical = Astro.site ? new URL(pagePaths[page][locale], Astro.site).toString() : 'https://85skytower.org/transport';
+const breadcrumb = [
+  { name: t(locale, 'nav.home'), url: pagePaths.home[locale] },
+  { name: subpageLabel[page][locale], url: pagePaths[page][locale] },
+];
+const jsonLd = subpageJsonLd(content, canonical, locale, breadcrumb);
+---
+<BaseLayout locale={locale} title={content.title} description={content.description} page={page} jsonLd={jsonLd}>
+  <SubpageContent locale={locale} page={page} />
+</BaseLayout>

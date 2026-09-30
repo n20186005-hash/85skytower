@@ -1,0 +1,271 @@
+---
+import { home } from '../data/content';
+import { facts } from '../data/site';
+import { t, type Locale } from '../i18n';
+
+export interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const c = home[locale];
+const mapUrl = facts.mapUrl;
+const reviewSync = locale === 'zh' ? facts.reviewSync : locale === 'en' ? facts.reviewSyncEn : facts.reviewSyncJa;
+const ratingText = facts.rating.toFixed(1);
+const reviewCountText = facts.reviewCount.toLocaleString('en-US');
+const googleCountText = t(locale, 'reviews.googleCount').replace('{n}', reviewCountText);
+const outOfText = t(locale, 'reviews.outOf').replace('{n}', reviewCountText);
+const syncNoteText = t(locale, 'reviews.syncNote').replace('{note}', c.hero.ratingNote).replace('{date}', reviewSync);
+const viewAllText = t(locale, 'hero.viewAll');
+---
+
+<section class="gridline relative min-h-[92vh] overflow-hidden pt-24">
+  <div class="absolute inset-y-0 right-[11%] hidden w-px bg-[#63c6bc]/20 lg:block"></div>
+  <div class="absolute right-[4%] top-24 hidden text-[16rem] font-black leading-none text-white/[.025] lg:block">85</div>
+  <div class="mx-auto grid max-w-7xl gap-12 px-5 pb-16 pt-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:px-8 lg:pb-24">
+    <div class="relative z-10">
+      <p class="kicker">{c.hero.kicker}</p>
+      <h1 class="mt-6 text-6xl font-black leading-[.95] tracking-[-.05em] sm:text-7xl lg:text-[6.8rem]">
+        {c.hero.titleA}<br /><span class="text-[#63c6bc]">{c.hero.titleB}</span>
+      </h1>
+      <p class="mt-8 max-w-xl text-lg leading-8 text-white/65">{c.hero.intro}</p>
+      <div class="mt-8 flex flex-wrap gap-3 text-sm">
+        {c.hero.badges.map((b) => <span class="rounded-full border border-white/15 px-4 py-2">{b}</span>)}
+      </div>
+      <p class="mt-6 flex flex-wrap items-center gap-2 text-sm text-white/55">
+        <span class="font-black text-[#e4b572]">★ {ratingText}</span>
+        <span>·</span>
+        <span>{googleCountText}</span>
+      </p>
+      <p class="mt-1 text-xs text-white/40">{c.hero.ratingNote} · {reviewSync} · <a href={mapUrl} target="_blank" rel="noreferrer" class="underline decoration-white/30 underline-offset-2 hover:text-white/70">{viewAllText}</a></p>
+      <div class="mt-10 flex flex-wrap gap-4">
+        <a href="#status" class="rounded-full bg-[#e4b572] px-6 py-3 font-bold text-[#07171c] transition hover:-translate-y-0.5">{c.hero.ctaPrimary}</a>
+        <a href="#route" class="rounded-full border border-white/18 px-6 py-3 font-bold transition hover:bg-white/7">{c.hero.ctaSecondary}</a>
+      </div>
+    </div>
+    <figure class="photo-frame relative mx-auto w-full max-w-[620px] overflow-hidden rounded-[2rem] lg:ml-auto">
+      <img
+        src="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/85_Sky_Tower_20240919.jpg/960px-85_Sky_Tower_20240919.jpg"
+        alt="晴天下由街區仰望高雄85大樓"
+        width="960" height="1440"
+        fetchpriority="high"
+        class="aspect-[4/5] w-full object-cover object-[50%_55%]"
+      />
+      <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-5 pb-4 pt-16 text-xs text-white/65">{c.hero.figureCaption}</figcaption>
+      <div class="absolute right-4 top-4 rounded-full border border-white/20 bg-[#07171c]/75 px-4 py-2 text-xs font-bold backdrop-blur">{c.hero.coordLabel}</div>
+    </figure>
+  </div>
+</section>
+
+<section id="status" class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
+  <div class="grid gap-10 lg:grid-cols-[.72fr_1.28fr]">
+    <div>
+      <p class="kicker">{c.status.kicker}</p>
+      <h2 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">{c.status.title}</h2>
+      <p class="mt-5 max-w-md leading-7 text-white/58">{c.status.lead}</p>
+    </div>
+    <div class="grid gap-4 md:grid-cols-2">
+      <article data-status="closed" class="card rounded-3xl p-6 md:col-span-2">
+        <p class="text-sm font-black tracking-[.2em]">{t(locale, 'nav.status')}</p>
+        <h3 class="mt-3 text-2xl font-black">{c.status.closedTitle}</h3>
+        <p class="mt-3 leading-7 text-white/65">{c.status.closedBody}</p>
+      </article>
+      <article class="card rounded-3xl p-6">
+        <p class="kicker">{t(locale, 'label.ticket')}</p>
+        <h3 class="mt-3 text-xl font-black">{c.status.ticketTitle}</h3>
+        <p class="mt-3 text-sm leading-6 text-white/60">{c.status.ticketBody}</p>
+      </article>
+      <article class="card rounded-3xl p-6">
+        <p class="kicker">{t(locale, 'label.address')}</p>
+        <h3 class="mt-3 text-xl font-black">{c.status.addressTitle}</h3>
+        <p class="mt-3 text-sm leading-6 text-white/60">{c.status.addressBody}</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="overflow-hidden bg-[#f0eadf] text-[#0b1d21]">
+  <div class="mx-auto grid max-w-7xl lg:grid-cols-2">
+    <figure class="relative min-h-[560px]">
+      <img
+        src="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Kaohsiung_85_Sky_Tower_20181206.jpg/960px-Kaohsiung_85_Sky_Tower_20181206.jpg"
+        alt="傍晚燈光亮起時的高雄85大樓"
+        width="960" height="1280" loading="lazy"
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+      <figcaption class="absolute bottom-4 left-4 rounded-full bg-black/65 px-4 py-2 text-xs text-white/80">domjisch / Wikimedia Commons / CC BY 2.0</figcaption>
+    </figure>
+    <div class="flex items-center px-6 py-16 sm:px-10 lg:px-16">
+      <div>
+        <p class="text-xs font-black uppercase tracking-[.22em] text-[#397f79]">{c.bestTime.kicker}</p>
+        <h2 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">{c.bestTime.titleA}<br />{c.bestTime.titleB}</h2>
+        <p class="mt-6 max-w-xl text-lg leading-8 text-black/65">{c.bestTime.body}</p>
+        <div class="mt-10 grid gap-5 sm:grid-cols-2">
+          <div class="border-t border-black/15 pt-4"><p class="text-3xl font-black">{c.bestTime.stat1Value}</p><p class="mt-2 text-sm text-black/55">{c.bestTime.stat1Label}</p></div>
+          <div class="border-t border-black/15 pt-4"><p class="text-3xl font-black">{c.bestTime.stat2Value}</p><p class="mt-2 text-sm text-black/55">{c.bestTime.stat2Label}</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="transport" class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
+  <div class="grid gap-10 lg:grid-cols-[.9fr_1.1fr]">
+    <div>
+      <p class="kicker">{c.transport.kicker}</p>
+      <h2 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">{c.transport.title}</h2>
+      <p class="mt-5 max-w-md leading-7 text-white/58">{c.transport.lead}</p>
+    </div>
+    <div class="space-y-4">
+      {c.transport.cards.map((card) => (
+        <article class="card rounded-3xl p-6">
+          <div class="flex items-start gap-4">
+            <span class:list={['grid h-11 w-11 shrink-0 place-items-center rounded-full font-black text-[#07171c]', card.icon === 'M' ? 'bg-[#63c6bc]' : card.icon === 'C' ? 'bg-[#e4b572]' : 'border border-white/20']}>{card.icon}</span>
+            <div><h3 class="text-xl font-black">{card.title}</h3><p class="mt-2 leading-7 text-white/60">{card.body}</p></div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <div id="parking" class="mt-12 grid gap-6 md:grid-cols-3">
+    <div class="card rounded-3xl p-6 md:col-span-1"><p class="kicker">{c.transport.parkingKicker}</p><h3 class="mt-3 text-2xl font-black">{c.transport.parkingTitle}</h3><p class="mt-4 leading-7 text-white/58">{c.transport.parkingBody}</p></div>
+    <div class="card rounded-3xl p-6 md:col-span-2"><p class="text-lg font-black">{c.transport.parkingTipTitle}</p><div class="mt-5 grid gap-4 sm:grid-cols-3 text-sm text-white/60">{c.transport.parkingTips.map((tip) => <p><strong class="block text-white">{tip.title}</strong>{tip.body}</p>)}</div></div>
+  </div>
+</section>
+
+<section id="route" class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
+  <div class="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+    <div><p class="kicker">{c.route.kicker}</p><h2 class="mt-4 text-4xl font-black sm:text-5xl">{c.route.title}</h2></div>
+    <p class="max-w-lg text-sm leading-6 text-white/55">{c.route.lead}</p>
+  </div>
+  <div class="grid gap-4 md:grid-cols-5">
+    {c.route.stops.map((stop, i) => (
+      <div class="card relative rounded-3xl p-5">
+        <span class="text-5xl font-black text-white/8">0{i + 1}</span>
+        <h3 class="mt-4 font-black">{stop}</h3>
+        {i < c.route.stops.length - 1 && <span class="absolute -right-3 top-1/2 z-10 hidden text-[#63c6bc] md:block">→</span>}
+      </div>
+    ))}
+  </div>
+</section>
+
+<section class="bg-[#0d252b] py-20">
+  <div class="mx-auto max-w-7xl px-5 lg:px-8">
+    <div class="grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center">
+      <figure class="photo-frame relative overflow-hidden rounded-[2rem]">
+        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/85_Sky_Tower_atrium_Kaohsiung_Taiwan_2025_12_09_114617.jpg/960px-85_Sky_Tower_atrium_Kaohsiung_Taiwan_2025_12_09_114617.jpg" alt="高雄85大樓挑高中庭向上看的幾何線條" width="960" height="1280" loading="lazy" class="aspect-[4/5] w-full object-cover" />
+        <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-5 pb-4 pt-16 text-xs text-white/70">The Nature Box / Wikimedia Commons / CC0 1.0</figcaption>
+      </figure>
+      <div>
+        <p class="kicker">{c.architecture.kicker}</p>
+        <h2 class="mt-4 text-4xl font-black sm:text-5xl">{c.architecture.title}</h2>
+        <p class="mt-6 text-lg leading-8 text-white/62">{c.architecture.body}</p>
+        <div class="mt-10 grid gap-6 sm:grid-cols-2">
+          <div class="border-l-2 border-[#63c6bc] pl-5"><p class="text-3xl font-black">{c.architecture.stat1Value}</p><p class="mt-2 text-sm text-white/52">{c.architecture.stat1Label}</p></div>
+          <div class="border-l-2 border-[#e4b572] pl-5"><p class="text-3xl font-black">{c.architecture.stat2Value}</p><p class="mt-2 text-sm text-white/52">{c.architecture.stat2Label}</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="around" class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
+  <div class="grid gap-14 lg:grid-cols-2">
+    <div>
+      <p class="kicker">{c.around.kicker}</p>
+      <h2 class="mt-4 text-4xl font-black">{c.around.title}</h2>
+      <div class="mt-8 space-y-3">
+        {c.around.nearby.map((item, i) => (
+          <article class="card rounded-3xl p-5">
+            <div class="flex gap-4"><span class="text-sm font-black text-[#63c6bc]">0{i + 1}</span><div><h3 class="font-black">{item.name}</h3><p class="mt-2 text-sm leading-6 text-white/55">{item.desc}</p></div></div>
+          </article>
+        ))}
+      </div>
+    </div>
+    <div>
+      <p class="kicker">{c.around.foodKicker}</p>
+      <h2 class="mt-4 text-4xl font-black">{c.around.foodTitle}</h2>
+      <p class="mt-5 text-sm leading-6 text-white/50">{c.around.foodLead}</p>
+      <div class="mt-8 space-y-3">
+        {c.around.food.map((item, i) => (
+          <article class="card rounded-3xl p-5">
+            <div class="flex gap-4"><span class="text-sm font-black text-[#e4b572]">0{i + 1}</span><div><h3 class="font-black">{item.name}</h3><p class="mt-2 text-sm leading-6 text-white/55">{item.desc}</p></div></div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reviews" class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
+  <div class="grid gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+    <div>
+      <p class="kicker">{c.reviews.kicker}</p>
+      <h2 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">{c.reviews.title}</h2>
+      <p class="mt-5 max-w-md leading-7 text-white/58">{c.reviews.lead}</p>
+    </div>
+    <div class="card rounded-3xl p-8">
+      <div class="flex items-end gap-4">
+        <span class="text-6xl font-black text-[#e4b572]">{ratingText}</span>
+        <div class="pb-1">
+          <div class="text-lg tracking-[.3em] text-[#e4b572]">★★★★<span class="text-white/25">★</span></div>
+          <p class="mt-1 text-sm text-white/55">{outOfText}</p>
+        </div>
+      </div>
+      <p class="mt-6 border-t border-white/10 pt-5 text-xs leading-5 text-white/42">{syncNoteText}</p>
+      <a href={mapUrl} target="_blank" rel="noreferrer" class="mt-5 inline-flex items-center gap-2 rounded-full bg-[#e4b572] px-6 py-3 font-bold text-[#07171c] transition hover:-translate-y-0.5">{t(locale, 'cta.map')}</a>
+    </div>
+  </div>
+</section>
+
+<section class="section-rule mx-auto max-w-7xl px-5 py-20 lg:px-8">
+  <div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+    <div><p class="kicker">{t(locale, 'nav.map')}</p><h2 class="mt-4 text-4xl font-black">{c.mapSection.title}</h2></div>
+    <a href={mapUrl} target="_blank" rel="noreferrer" class="text-sm font-bold text-[#9fe1d9]">{t(locale, 'cta.map')}</a>
+  </div>
+  <div class="map-wrap overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-2">
+    <iframe
+      title={`${c.mapSection.title}`}
+      src="https://www.google.com/maps?q=22.6116938,120.3001305&hl=zh-TW&gl=TW&z=17&output=embed"
+      class="h-[520px] w-full rounded-[1.6rem] border-0"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      allowfullscreen
+    ></iframe>
+  </div>
+  <p class="mt-4 text-xs leading-5 text-white/42">{c.mapSection.note}</p>
+</section>
+
+<section id="faq" class="section-rule mx-auto max-w-5xl px-5 py-20 lg:px-8">
+  <p class="kicker">{t(locale, 'nav.faq')}</p>
+  <h2 class="mt-4 text-4xl font-black sm:text-5xl">{t(locale, 'nav.faq')}</h2>
+  <div class="mt-10 divide-y divide-white/10 border-y border-white/10">
+    {c.faq.map((item, i) => (
+      <details class="group py-6" open={i === 0}>
+        <summary class="flex items-center justify-between gap-6 font-bold"><span>{item.q}</span><span class="text-[#63c6bc] transition group-open:rotate-45">＋</span></summary>
+        <p class="mt-4 max-w-3xl leading-7 text-white/58">{item.a}</p>
+      </details>
+    ))}
+  </div>
+</section>
+
+<section class="bg-[#f0eadf] text-[#0b1d21]">
+  <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+    <div class="grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
+      <div>
+        <p class="text-xs font-black uppercase tracking-[.22em] text-[#397f79]">{c.fieldNote.kicker}</p>
+        <h2 class="mt-4 max-w-3xl text-4xl font-black">{c.fieldNote.title}</h2>
+        <p class="mt-5 max-w-2xl leading-7 text-black/60">{c.fieldNote.body}</p>
+      </div>
+      <a href={mapUrl} target="_blank" rel="noreferrer" class="inline-flex rounded-full bg-[#0b1d21] px-6 py-3 font-bold text-white">{c.fieldNote.cta}</a>
+    </div>
+  </div>
+</section>
+
+<section id="sources" class="section-rule mx-auto max-w-7xl px-5 py-16 lg:px-8">
+  <p class="kicker">{c.sources.kicker}</p>
+  <h2 class="mt-4 text-3xl font-black">{c.sources.title}</h2>
+  <div class="mt-6 space-y-3 text-sm leading-6 text-white/55">
+    {c.sources.body.map((p) => <p>{p} <a href={mapUrl} target="_blank" rel="noreferrer" class="text-[#9fe1d9] underline underline-offset-2">{t(locale, 'cta.map')}</a></p>)}
+  </div>
+</section>
