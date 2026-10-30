@@ -1,0 +1,18 @@
+---
+import type {Locale} from '../i18n';
+import {facts} from '../data/site';
+const {locale}=Astro.props as {locale:Locale};
+const zh=locale==='zh',en=locale==='en';
+---
+<section id="sources" class="source-links border-t border-white/15 pt-7 text-sm text-white/80">
+<h2>{zh?'官方來源與查核範圍':en?'Official sources and scope':'公式情報と確認範囲'}</h2>
+<p>{zh?'核對日期：2026年10月30日。觀光署仍列37–85樓整修暫不開放；不表示整棟停用，也不證明任何住宿業者營業或合法登記。未確認重開日、現行觀景台票價或統一入內時間。':en?'Checked 30 October 2026. The Tourism Administration still lists floors 37–85 as temporarily closed for renovation. This does not establish whole-building disuse or a lodging operator’s trading or registration status. A reopening date, current deck ticket price and unified indoor hours are unconfirmed.':'確認日2026年10月30日。観光署は37–85階を工事のため一時非公開と掲載中です。建物全体の不使用や宿泊業者の営業・登録を示すものではなく、再開日、現行展望台料金、統一の入館時間は未確認です。'}</p>
+<ul><li><a href="https://www.taiwan.net.tw/m1.aspx?id=9328&sNo=0001016">交通部觀光署 — 高雄85大樓</a> · <a href="https://eng.taiwan.net.tw/m1.aspx?id=5355&sNo=0002121">Tourism Administration — Kaohsiung 85 Building</a></li>
+<li><a href="https://www.skyscrapercenter.com/building/tuntex-sky-tower/338">CTBUH/CVU — 85 Sky Tower</a>: {zh?'建築高度347.5公尺、最高尖端378公尺、地上85層地下5層；這些是建築資料，不是開放或業者營業證明。':en?'architectural height 347.5 m, height to tip 378 m, 85 floors above ground and 5 below; building data, not admission or trading evidence.':'建築高さ347.5m、最高先端378m、地上85階・地下5階。建築データであり、公開や業者営業の証拠ではありません。'}</li>
+<li><a href="https://www.krtc.com.tw/Guide/station_info?n=R8">高雄捷運 R8 三多商圈</a> · <a href="https://www.krtc.com.tw/KLRT/station_info?n=C8">高雄輕軌 C8 高雄展覽館</a>: {zh?'向營運方查當日服務、出口與所需協助，不以直線距離當作實際步行路線或時間。':en?'check services, exits and assistance with the operator; straight-line distances are not walking routes or travel times.':'当日の運行、出口、介助を運営者に確認してください。直線距離は徒歩経路や所要時間ではありません。'}</li>
+<li><a href={facts.mapUrl}>Google Maps</a>: {zh?'本頁評分為介面顯示的大樓手動快照，不是已核實的CTtraveller Suit身分、特定旅宿評價或本站調查。地圖列5號，觀光署列1號；先向目的單位確認入口。':en?'ratings here are a manual snapshot of the displayed building listing, not a verified CTtraveller Suit identity, a particular hotel review or this guide’s own survey. Maps lists No. 5 and the Tourism Administration No. 1; confirm the actual entrance.':'評価は画面に表示された建物の手動記録で、CTtraveller Suitなど特定業者の同定情報、ホテルの評価や本ガイドの調査ではありません。地図は5号、観光署は1号です。入口を施設に確認してください。'}</li></ul>
+<p>{zh?'地圖標示無障礙入口，不代表門檻、電梯、不同入口互通或完整路線已核實；需向實際目的單位確認。':en?'The map marks an accessible entrance; thresholds, lifts, links between entrances and a complete route have not been audited. Confirm with the actual unit.':'地図のバリアフリー入口表示は、段差、エレベーター、入口間の移動や全行程を確認したものではありません。目的施設へ確認してください。'}</p>
+<div id="image-credits"><h2 class="mt-6">{zh?'插畫與建築資料署名':en?'Illustrations and architectural attribution':'図と建築資料のクレジット'}</h2>
+<p>{zh?'頁面的高樓、天際線與幾何圖由本站以圖形程式繪製，採CC0；不是實景照片、精確重建、中庭或樓層圖，也不證明目前照明或可入內。既有品牌圖形另作社交卡使用。':en?'The tower, skyline and geometry graphics are site-authored code illustrations under CC0. They are not photographs, accurate reconstructions, atrium views or floor plans, and do not establish current lighting or indoor access. The existing graphic is also used as a social card.':'高層ビル、街並み、幾何学の図は本ガイドがコードで制作したCC0のシンボル図です。写真、精密な復元、アトリウムや平面図ではなく、点灯や入館を証明しません。既存の図も共有カードに使用します。'} <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a></p>
+<p>{zh?'建築資料署名（依專業資料庫）：設計建築師C.Y. Lee & Partners Architects/Planners；Architect of Record：HOK, Inc.。不表示建築師為本站插畫背書或授權本網站。':en?'Architectural attribution from the professional record: design architect C.Y. Lee & Partners Architects/Planners; architect of record HOK, Inc. This does not imply endorsement of these illustrations or authorization of this guide.':'専門資料による建築クレジット：設計C.Y. Lee & Partners Architects/Planners、Architect of Record HOK, Inc.。図への推薦や本ガイドの公認を意味しません。'}</p></div>
+</section>

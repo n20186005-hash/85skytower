@@ -35,22 +35,22 @@ pnpm deploy
 - canonical 已固定為 `https://85skytower.org`（不含 www）。
 - 每個邏輯頁面都輸出 hreflang（zh-Hant / en / ja + x-default 指向中文版）。
 - 首頁與子頁皆含 TouristAttraction + FAQPage 結構化資料；子頁另含 BreadcrumbList。
-- 評分 4.1 / 13,285 僅用於網頁展示與 JSON-LD 的 aggregateRating（同步自 Google 地圖，非官方站，已於頁尾與來源區聲明）。
+- Google Maps大樓介面評分4.1／13,296為2026年10月30日手動快照，非特定旅宿評價，且不寫入aggregateRating；無評論全文複製或即時同步宣稱。
 
-## 部署前必做（Cloudflare 控制台）
+## 入口驗證
 
-Workers Static Assets **不支援**在 `public/_redirects` 做網域級重導向，因此下列項目必須在 Cloudflare 控制台設定，純程式碼無法完成：
-
-1. **Always Use HTTPS**：強制 http→https 301（解決 GSC 目前收錄 `http://` 版本的問題）。
-2. **Redirect Rules**：`www.85skytower.org` → `https://85skytower.org`（www→apex 統一規範網址）。
-3. 在 Google Search Console 建立 `https://85skytower.org` 資源並重新提交 sitemap。
-
-`public/_headers` 已下發 HSTS 與基本安全標頭作為第二層防護。
+程式canonical保持`https://85skytower.org`。HTTP與www屬既有入口，canonical標籤和HSTS本身不能證明已完成伺服器跳轉。部署後必須實測Host／協定／路徑／query與GET／HEAD；本次不更改DNS、安全或託管設定，也不把受限的網路請求當作已驗證可用。
 
 ## 圖片
 
-實景照使用 Wikimedia Commons 可重用影像，授權詳見 `PHOTO_CREDITS.md`。目前 HTML 以 Wikimedia 圖片 URL 載入；如部署環境要求完全本地化，下載對應檔案至 `public/images/` 後替換 `<img>` 的 `src` 即可。
+正文目前使用有明確標示的本地符號插畫，非實景、精確重建或樓層圖；既有SVG社交圖以已安裝的Sharp匯出PNG。原外部照片的逐檔來源與授權紀錄保留在`PHOTO_CREDITS.md`，但不再向外請求未完成像素核實的檔案。公開署名與來源位於各頁可見來源區。
 
 ## 資料狀態
 
 觀光署目前仍標示 85 大樓 37–85 樓整修、暫不開放；網站刻意不寫舊觀景台票價或舊營業時間。正式上線前若營運狀態有變，請同步更新首頁「現況先知道」與 JSON-LD（位於 `src/data/content.ts` 與 `src/data/site.ts`）。
+
+## 現況與隱私
+
+保留三語九個內容路由及純靜態架構，樓層與交通頁使用與原有網址相容的尾斜線版本。37–85樓參觀整修公告不等於整棟停用或任何旅宿仍營業。地址1號與地圖5號的來源及實際入口需分別確認。建築高度347.5m與最高尖端378m依專業資料庫分開表述。
+
+既有GA自動載入保留，修正原先字面量識別碼。三語說明GA、地圖、Cloudflare託管邊緣與可能的beacon，沒有虛構站內開關。服務工作執行緒只退役85skytower-前綴的舊快取，不攔截請求或刪除其他快取。無天氣API小工具，也未新增代理或快取架構。

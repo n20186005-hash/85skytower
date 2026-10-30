@@ -54,3 +54,5 @@ a { color: inherit; }
 }
 details summary { cursor: pointer; list-style: none; }
 details summary::-webkit-details-marker { display: none; }
+
+header a{min-height:44px;display:inline-flex;align-items:center}a:focus-visible,summary:focus-visible{outline:3px solid #e4b572;outline-offset:4px;box-shadow:0 0 0 6px #07171c}h1{overflow-wrap:anywhere}section{scroll-margin-top:1rem}.source-links{line-height:1.8;margin-top:2rem}.source-links h2{font-size:1.3rem;font-weight:800}.source-links p,.source-links ul{margin-top:.8rem}.source-links ul{padding-inline-start:1.2rem;list-style:disc}.source-links a{text-decoration:underline}.source-links a{color:#9fe1d9}

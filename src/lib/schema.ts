@@ -12,11 +12,11 @@ export function attractionJsonLd(canonical: string, locale: Locale) {
   return {
     '@context': 'https://schema.org',
     '@type': 'TouristAttraction',
-    '@id': `${canonical}#attraction`,
+    '@id': new URL('/#attraction', canonical).toString(),
     name,
     alternateName: facts.alternateNames,
     description: '',
-    image: [`${new URL('/images/og-cover.svg', canonical).toString()}`],
+    image: [`${new URL('/images/og-cover.png', canonical).toString()}`],
     url: canonical,
     address: {
       '@type': 'PostalAddress',
@@ -31,13 +31,7 @@ export function attractionJsonLd(canonical: string, locale: Locale) {
       latitude: facts.geo.lat,
       longitude: facts.geo.lng,
     },
-    publicAccess: true,
-    isAccessibleForFree: true,
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: facts.rating,
-      reviewCount: facts.reviewCount,
-    },
+    sameAs: [facts.govtTourismUrl, 'https://www.skyscrapercenter.com/building/tuntex-sky-tower/338'],
     additionalProperty: [
       {
         '@type': 'PropertyValue',

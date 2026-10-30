@@ -2,12 +2,12 @@
 // 這些值不因語言改變，所有語言頁面共用同一份。改地址 / 電話 / 評分只動這裡。
 
 export const facts = {
-  // Google 地圖評價（僅網頁展示與 JSON-LD 的 aggregateRating 使用；同步自 Google 地圖）。
+  // Google 地圖評價（僅作已註明日期的網頁快照，不寫入 aggregateRating）。
   rating: 4.1,
-  reviewCount: 13285,
-  reviewSync: '2026 年 9 月',
-  reviewSyncEn: 'September 2026',
-  reviewSyncJa: '2026 年 9 月',
+  reviewCount: 13296,
+  reviewSync: '2026 年 10 月 30 日',
+  reviewSyncEn: '30 October 2026',
+  reviewSyncJa: '2026 年 10 月 30 日',
 
   // 建築實體事實。
   nameZh: '高雄85大樓',
@@ -15,11 +15,11 @@ export const facts = {
   nameJa: '85 大樓（85スカイタワー）',
   alternateNames: ['85 Sky Tower', 'Tuntex Sky Tower', '東帝士85國際廣場', '高雄85大樓', 'Kaohsiung 85 Sky Tower'],
 
-  // 座標使用你提供的 Google Maps 點位（自強三路5號）。
-  geo: { lat: 22.6116938, lng: 120.3001305 },
-  // 觀光署正式地標地址為自強三路1號；兩者同屬一座建築範圍。
+  // 建築地標座標採交通部觀光署資料；不是已核實的特定入口。
+  geo: { lat: 22.611047, lng: 120.30037 },
+  // 觀光署正式地標地址為自強三路1號；地圖介面另列5號，不能據此保證入口或電梯互通。
   address: {
-    street: '自強三路5號',
+    street: '自強三路1號',
     locality: '苓雅區',
     region: '高雄市',
     postal: '802',
@@ -34,7 +34,7 @@ export const facts = {
   floorsBelow: 5,
 
   mapUrl: 'https://maps.app.goo.gl/RUknnzQqELmLteJh6',
-  govtTourismUrl: 'https://khh.travel',
+  govtTourismUrl: 'https://www.taiwan.net.tw/m1.aspx?id=9328&sNo=0001016',
 
   // 現況描述（語言中立的結構化狀態，前端各語翻譯）。
   statusNote: '37–85 樓整修中，觀景區暫不開放；外觀與周邊公共空間可依現場狀況參觀。',

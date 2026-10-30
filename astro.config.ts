@@ -11,6 +11,7 @@ export default defineConfig({
   integrations: SITE_URL
     ? [
         sitemap({
+          filter: (page) => !/\/404(?:\/|$)/.test(new URL(page).pathname),
           i18n: {
             defaultLocale: 'zh',
             locales: {

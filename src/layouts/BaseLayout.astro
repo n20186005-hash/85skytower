@@ -1,7 +1,8 @@
 ---
 import '../styles/global.css';
+import GuideSources from '../components/GuideSources.astro';
 import { SITE_URL, GA4_ID } from '../config';
-import { locales, localeMeta, alternates, pagePaths, subpageLabel, t, type Locale, type PageKey } from '../i18n';
+import { locales, localeMeta, hreflangCode, alternates, pagePaths, subpageLabel, t, type Locale, type PageKey } from '../i18n';
 
 export interface Props {
   locale: Locale;
@@ -14,7 +15,7 @@ export interface Props {
 const { locale, title, description, page, jsonLd } = Astro.props;
 
 const canonical = Astro.site ? new URL(pagePaths[page][locale], Astro.site).toString() : undefined;
-const ogImage = Astro.site ? new URL('/images/og-cover.svg', Astro.site).toString() : undefined;
+const ogImage = Astro.site ? new URL('/images/og-cover.png', Astro.site).toString() : undefined;
 const meta = localeMeta[locale];
 const hreflangs = alternates(page, SITE_URL);
 const mapUrl = 'https://maps.app.goo.gl/RUknnzQqELmLteJh6';
@@ -74,11 +75,11 @@ const navItems =
     {hreflangs.map((h) => <link rel="alternate" hreflang={h.hreflang} href={h.href} />)}
     {jsonLd.map((schema) => <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>)}
     <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}></script>
-    <script is:inline>
+    <script define:vars={{ gaId: GA4_ID }}>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', '{GA4_ID}');
+      gtag('config', gaId);
     </script>
     <script is:inline>
       if ('serviceWorker' in navigator) {
@@ -87,12 +88,12 @@ const navItems =
     </script>
   </head>
   <body>
-    <header class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#07171c]/86 backdrop-blur-xl">
-      <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 lg:px-8">
+    <header class="relative z-50 border-b border-white/10 bg-[#07171c]/86 backdrop-blur-xl">
+      <div class="mx-auto flex max-w-7xl items-center justify-between flex-wrap gap-3 px-5 py-3 lg:px-8">
         <a href={pagePaths.home[locale]} class="flex items-center gap-3" aria-label={t(locale, 'nav.home')}>
           <img src="/icons/logo.svg" alt={t(locale, 'logo.alt')} class="h-10 w-auto" />
         </a>
-        <nav aria-label="主要導覽" class="hidden items-center gap-5 text-sm text-white/65 md:flex">
+        <nav aria-label={locale === 'zh' ? '主要導覽' : locale === 'en' ? 'Main navigation' : 'メインナビゲーション'} class="order-3 flex w-full flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/80 lg:order-none lg:w-auto">
           {navItems.map((item) => <a class="hover:text-white" href={item.href}>{item.label}</a>)}
         </nav>
         <div class="flex items-center gap-3">
@@ -100,8 +101,8 @@ const navItems =
             {langLinks.map((l) => (
               <a
                 href={l.href}
-                hreflang={localeMeta[l.locale].ogLocale}
-                class:list={['rounded-full px-2.5 py-1 transition', l.locale === locale ? 'bg-[#63c6bc]/20 text-[#9fe1d9] font-bold' : 'text-white/55 hover:text-white']}
+                hreflang={hreflangCode[l.locale]} lang={localeMeta[l.locale].htmlLang}
+                class:list={['rounded-full px-2.5 py-1 transition', l.locale === locale ? 'bg-[#63c6bc]/20 text-[#9fe1d9] font-bold' : 'text-white/80 hover:text-white']}
                 aria-current={l.locale === locale ? 'true' : undefined}
               >{l.label}</a>
             ))}
@@ -120,22 +121,23 @@ const navItems =
         <div class="flex flex-col justify-between gap-7 md:flex-row md:items-start">
           <div>
             <img src="/icons/logo.svg" alt={t(locale, 'logo.alt')} class="h-11 w-auto" />
-            <p class="mt-4 max-w-lg text-sm leading-6 text-white/45">{t(locale, 'footer.disclaimer')}</p>
+            <p class="mt-4 max-w-lg text-sm leading-6 text-white/80">{t(locale, 'footer.disclaimer')}</p>
           </div>
-          <div class="flex flex-wrap gap-4 text-sm text-white/48">
+          <div class="flex flex-wrap gap-4 text-sm text-white/80">
             <a href="#privacy">{t(locale, 'footer.privacy')}</a>
             <a href="#terms">{t(locale, 'footer.terms')}</a>
             <a href="#cookies">{t(locale, 'footer.cookies')}</a>
           </div>
         </div>
         <div class="mt-8 grid gap-3 md:grid-cols-3">
-          <details id="privacy" class="card rounded-2xl p-4"><summary class="font-bold">{t(locale, 'legal.privacy')} ＋</summary><p class="mt-3 text-xs leading-5 text-white/48">{t(locale, 'legal.privacyBody')}</p></details>
-          <details id="terms" class="card rounded-2xl p-4"><summary class="font-bold">{t(locale, 'legal.terms')} ＋</summary><p class="mt-3 text-xs leading-5 text-white/48">{t(locale, 'legal.termsBody')}</p></details>
-          <details id="cookies" class="card rounded-2xl p-4"><summary class="font-bold">{t(locale, 'legal.cookies')} ＋</summary><p class="mt-3 text-xs leading-5 text-white/48">{t(locale, 'legal.cookiesBody')}</p></details>
+          <details id="privacy" class="card rounded-2xl p-4"><summary class="font-bold">{t(locale, 'legal.privacy')} ＋</summary><p class="mt-3 text-sm leading-7 text-white/80">{t(locale, 'legal.privacyBody')}</p><p class="mt-3 text-sm"><a href="https://developers.cloudflare.com/web-analytics/about/">Cloudflare Web Analytics</a> · <a href="https://developers.cloudflare.com/web-analytics/data-metrics/">Cloudflare metrics</a> · <a href="https://policies.google.com/privacy">Google privacy</a></p></details>
+          <details id="terms" class="card rounded-2xl p-4"><summary class="font-bold">{t(locale, 'legal.terms')} ＋</summary><p class="mt-3 text-sm leading-7 text-white/80">{t(locale, 'legal.termsBody')}</p></details>
+          <details id="cookies" class="card rounded-2xl p-4"><summary class="font-bold">{t(locale, 'legal.cookies')} ＋</summary><p class="mt-3 text-sm leading-7 text-white/80">{t(locale, 'legal.cookiesBody')}</p></details>
         </div>
-        <div class="mt-8 flex flex-col justify-between gap-3 border-t border-white/8 pt-5 text-xs text-white/36 sm:flex-row">
-          <p>{t(locale, 'footer.photo')}</p>
-          <p>GA4 · {GA4_ID}</p>
+        <GuideSources locale={locale} />
+        <div class="mt-8 flex flex-col justify-between gap-3 border-t border-white/8 pt-5 text-xs text-white/80 sm:flex-row">
+          <a href="#image-credits">{t(locale, 'footer.photo')}</a>
+          <a href="https://policies.google.com/privacy">Google privacy</a>
         </div>
       </div>
     </footer>
